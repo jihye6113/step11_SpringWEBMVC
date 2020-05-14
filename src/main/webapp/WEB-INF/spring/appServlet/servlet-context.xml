@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven /><!-- 이 부분을 주석처리하면 @ExceptionHandler가 안된다. -->
+	<!-- @ExceptionHandler와  SimpleMappingExceptionResolver는 같이 사용할 수 없지만, 위 코드를 사용하면 같이 사용할 수 있다.
+	우선순위는 SimpleMappingExceptionResolver.-->
+
+	<!-- 
+	Handles HTTP GET requests for /resources/** by efficiently 
+	serving up static resources in the ${webappRoot}/resources directory 
+	Controller가 처리하지 않아도 되는 경로를 설정한다.
+	-->
+<!-- <resources mapping="/resources/**" location="/resources/" /> -->
+<!-- <resources mapping="/css/**" location="/css/" /> -->
+<!-- resources 태그는 annotation-driven과 관련이 있다. annotation-driven이 주석처리나 없다면 실행되지 않음. -->
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean> <!-- 그냥 bean 태그로 입력해도 된다. 객체를 생성하는 태그 -->
+	
+	<!-- 어노테이션을 활성화시키는 태그 -->
+	<context:component-scan base-package="kosta.mvc.controller" />
+	
+	<!-- 모든 COntroller가 공통으로 사용하게 될 예외처리 클래스 등록 -->
+	<beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<beans:property name="exceptionMappings">
+			<beans:props>
+				<beans:prop key="java.lang.NumberFormatException">
+					error/numberView
+				</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+	
+	<!-- 
+		SimpleMappingExceptionResolver와 @ExceptionHandler를 동시에 사용하기 위해서는
+		@ExceptionHandler이 사용 가능하도록하는 객체를 생성한다.
+		
+		AnnotationMethodHandlerExceptionResolver는 4.x까지 지원한다.
+		5.x에선 annotation-driven 선언.
+	 -->
+	 <!-- <beans:bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver"></beans:bean> -->
+	
+</beans:beans>
